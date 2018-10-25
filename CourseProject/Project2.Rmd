@@ -1,0 +1,60 @@
+---
+title: "Statistical Inference Project 2"
+author: "Francisco Martín"
+date: "October 8, 2018"
+output: html_document
+---
+
+## Overview
+
+This is the part 1 of the Statistical Inference final project. It consist on a study of the 
+R dataset "ToothGrowth", which presents measurements of 60 Guinea Pigs, each 10 at each Vitamin 
+C dose level (0.5, 1 and 2 mg) for each type of delivery method (orange juice or ascorbic acid).
+
+## Analysis
+
+### Summary of the data
+
+First of all data should be loaded. Let's look how is it like:
+
+```{r load_data}
+library(datasets)
+library(ggplot2)
+data(ToothGrowth)
+summary(ToothGrowth)
+head(ToothGrowth)
+``` 
+
+There are 30 observations of every type of supply (OJ orange juice or VC ascorbic acid). as there 
+are 3 different doses, we can use boxplot to see every one of them
+
+```{r boxplot_doses}
+g <-  ggplot(ToothGrowth, aes(x=dose, y=len)) 
+g + geom_boxplot(aes(fill=factor(dose)))+facet_grid(.~supp)+xlab("Dose (mg) of vitamin C")+ylab("Tooth length")+ggtitle("Tooth lenght by dose.")
+```
+
+### Hypothesis
+
+Once we have seen how data is distributed, let's do some hypothesis. Hypothesis I think is 
+reasonable here is that orange juice has a significant impact on tooth lenght compared to 
+ascorbic acid. This will be my zero hipothesis H<sub>0</sub>. The non-zero hypothesis will be 
+just the opossite: orange juice has no significant impact compared to ascorbic acid. This will 
+be H<sub>a</sub>.
+
+Just looking at the data, it looks pretty clear orange juice has a bigger impact when dose is 
+smaller than 2mg. But let's test it using t.test just for be sure of that:
+
+```{r testing}
+t.test(len ~ supp, data=ToothGrowth[ToothGrowth$dose < 2,])
+t.test(len ~ supp, data=ToothGrowth[ToothGrowth$dose == 2,])
+```
+
+## Conclusions
+
+Looking at the result of t.test, difference in mean when dose is 2mg is approximately zero, while 
+this difference when dose is lower than 2mg is 5.59. Also, 95% confident interval of the t.test 
+with dose lower than 2 does not include 0, while 95% confident interval of the 2mg test is 
+centered nearly 0. This confirms the hypothesis that orange juice has a bigger impact but only when 
+dose is lower than 2mg.
+
+
